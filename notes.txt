@@ -1,0 +1,29 @@
+
+idem (name may change) is a test for finding, creating and linking sessions of software together. It may develop into a standalone pipeline overview.
+
+First: can we find or create sessions of different software, through child processes? Can we use python3 for the main application, and python2 where needed?
+Should be able to - opening from within Maya or Houdini will just run the main batch file, which in turn can connect to any existing processes running.
+Sadly not so simple in practice - just importing edRig has print and reload issues, so wait until it is necessary to add dependency
+
+This will still have dependency on edRig for now, will use the same pipeline functions etc, and later the asset system too.
+
+Should probably try out omniverse for this, but I'd like to get synchronous camera movement working across applications for the fun of it
+
+Simple option would be to add hooks in startup scripts for dccs to open ports on specific addresses, but that is entirely too easy. Idem should be a single-download, drop-in solution for default installs.
+It must also not interfere with any other user-defined python processes that may be running in those applications.
+
+Found the answer with command line arguments to run idem hook scripts when apps load.
+
+Houdini provides hrpyc as a direct server interface, but it runs python 2. Idem and blender will both be python 3.
+
+
+For "instant" data transfer, I'm making do with the caveman solution of checking sockets in a while loop. I hate it but it's by far the easiest solution, I spent a good day on this alone.
+
+A consistent pattern will make it slightly more elegant - listening socket is split off into a child thread, and constantly checks for data. DCC callback to be connected to "main server thread" (itself a child thread of the main application) and used to pass data back into idem bridge.
+
+It might have been more elegant to go with a file-based solution after all, have one idem file to read/write data into, and watch it for changes. But the current solution works
+
+
+
+
+
